@@ -26,7 +26,7 @@
 							<input type="hidden" name="tax" value="0">
 							<input type="hidden" name="lc" value="US">
 							<input type="hidden" name="bn" value="PP-DonationsBF">
-							<div class="donation-amount">$<input type="number" name="amount" min="1" value="5">
+							<div class="donation-amount">$<input type="number" name="amount" min="1" value="2">
 								<span>
 									<img draggable="false" class="emoji" alt="😀" src="https://s.w.org/images/core/emoji/11/svg/1f600.svg">
 								</span>
@@ -49,6 +49,7 @@
 				</td>
 			</tr>
 		</table>
+		<?php wp_nonce_field( 'wp_spotlight' ); ?>
 		<input type="submit" name="submit" id="submit" class="button button-primary" value="Save Changes">
 	</form>
 </div>

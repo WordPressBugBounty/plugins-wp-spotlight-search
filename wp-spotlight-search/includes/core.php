@@ -17,7 +17,7 @@ class WP_Spotlight_Core{
 	        if ($wp_spotlight_settings != false && in_array($type, $wp_spotlight_settings)) {
 	            $selected = 'checked';
 	        }
-	        $response .= "<label class='wp-spotlight-settings-checkbox'> <input type='checkbox' value='".$type."' name='search_include_options[]' $selected /> $label </label> <br>";
+	        $response .= "<label class='wp-spotlight-settings-checkbox'> <input type='checkbox' value='".esc_attr($type)."' name='search_include_options[]' $selected /> ".wp_kses_post($label)." </label> <br>";
 	    }
 
 	    return $response;
@@ -44,7 +44,7 @@ class WP_Spotlight_Core{
 	        return false;
 	    }
 
-	    return unserialize($wp_spotlight_setting);
+	    return unserialize($wp_spotlight_setting, ['allowed_classes' => false]);
 
 	}
 
@@ -207,6 +207,12 @@ class WP_Spotlight_Core{
 	}
 
 	public static function wp_spotlight_save_settings($data){
+		if (empty($data)) {
+			return;
+		}
+		if ( ! isset( $data['_wpnonce'] ) || ! wp_verify_nonce( $data['_wpnonce'], 'wp_spotlight' ) ) {
+			wp_die( 'Security check failed' );
+		}
 	    if (empty($data['search_include_options']) && empty($data['submit'])) {
 	        return false;
 	    }
@@ -214,7 +220,7 @@ class WP_Spotlight_Core{
 	        delete_option('wp_spotlight_setting');
 	        return true;
 	    }
-	    $settings['search_include_options'] = $data['search_include_options'];
+	    $settings['search_include_options'] = array_map('sanitize_text_field', $data['search_include_options']);
 	    update_option('wp_spotlight_setting', serialize($settings));
 	     ?>
 	    <div class="notice notice-success is-dismissible">
